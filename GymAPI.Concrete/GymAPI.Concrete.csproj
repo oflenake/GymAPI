@@ -4,4 +4,10 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GymAPI.Interface\GymAPI.Interface.csproj" />
+    <ProjectReference Include="..\GymAPI.Models\GymAPI.Models.csproj" />
+    <ProjectReference Include="..\GymAPI.ViewModels\GymAPI.ViewModels.csproj" />
+  </ItemGroup>
+
 </Project>
