@@ -13,4 +13,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GymAPI.Concrete\GymAPI.Concrete.csproj" />
+    <ProjectReference Include="..\GymAPI.Interface\GymAPI.Interface.csproj" />
+    <ProjectReference Include="..\GymAPI.Models\GymAPI.Models.csproj" />
+    <ProjectReference Include="..\GymAPI.ViewModels\GymAPI.ViewModels.csproj" />
+  </ItemGroup>
+
 </Project>
