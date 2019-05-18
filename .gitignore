@@ -259,3 +259,6 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# IDE Visual Studio 2017
+GymAPI/wwwroot/ErrorLog/Log_18-May-2019.txt

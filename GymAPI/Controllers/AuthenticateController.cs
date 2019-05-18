@@ -22,15 +22,22 @@ namespace GymAPI.Controllers
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
+        #region Fields
+
         private readonly AppSettings _appSettings;
         private readonly IUsers _users;
+        #endregion
+
+        #region Constructor
 
         public AuthenticateController(IOptions<AppSettings> appSettings, IUsers users)
         {
             _users = users;
             _appSettings = appSettings.Value;
         }
+        #endregion
 
+        #region Action Methods
         // POST: api/Authenticate
         [HttpPost]
         public IActionResult Post([FromBody] LoginRequestViewModel value)
@@ -39,11 +46,13 @@ namespace GymAPI.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var loginstatus = _users.AuthenticateUsers(value.UserName, EncryptionLibrary.EncryptText(value.Password));
+                    var loginstatus = _users.AuthenticateUsers(value.UserName,
+                                                               EncryptionLibrary.EncryptText(value.Password));
 
                     if (loginstatus)
                     {
-                        var userdetails = _users.GetUserDetailsbyCredentials(value.UserName, EncryptionLibrary.EncryptText(value.Password));
+                        var userdetails = _users.GetUserDetailsbyCredentials(value.UserName,
+                                                                             EncryptionLibrary.EncryptText(value.Password));
 
                         if (userdetails != null)
                         {
@@ -58,7 +67,8 @@ namespace GymAPI.Controllers
                                 new Claim(ClaimTypes.Name, userdetails.UserId.ToString())
                                 }),
                                 Expires = DateTime.UtcNow.AddDays(1),
-                                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                                                                            SecurityAlgorithms.HmacSha256Signature)
                             };
                             var token = tokenHandler.CreateToken(tokenDescriptor);
                             value.Token = tokenHandler.WriteToken(token);
@@ -90,5 +100,6 @@ namespace GymAPI.Controllers
                 throw;
             }
         }
+        #endregion
     }
 }
