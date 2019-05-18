@@ -48,7 +48,7 @@ namespace GymAPI.Concrete
 
         public bool AddSchemeMaster(SchemeMaster schemeMaster)
         {
-            //var connectionString = _configuration.GetConnectionString("DatabaseConnection");
+            //var connectionString = _configuration["SQLConnString_PRD:DBConnGymDB_PRD"];
 
             _context.SchemeMaster.Add(schemeMaster);
             var result = _context.SaveChanges();

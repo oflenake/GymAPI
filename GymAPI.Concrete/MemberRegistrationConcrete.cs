@@ -65,7 +65,7 @@ namespace GymAPI.Concrete
 
         public bool DeleteMember(long memberId)
         {
-            using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("DBConnGymDB_PRD")))
+            using (SqlConnection con = new SqlConnection(_configuration["SQLConnString_PRD:DBConnGymDB_PRD"]))
             {
                 string val = string.Empty;
                 var para = new DynamicParameters();
@@ -84,26 +84,28 @@ namespace GymAPI.Concrete
 
         public MemberRegistrationViewModel GetMemberbyId(int memberId)
         {
-            using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("DBConnGymDB_PRD")))
+            using (SqlConnection con = new SqlConnection(_configuration["SQLConnString_PRD:DBConnGymDB_PRD"]))
             {
                 var para = new DynamicParameters();
                 para.Add("@MemberId", memberId);
-                return con.Query<MemberRegistrationViewModel>("sprocMemberRegistrationSelectSingleItem", para, null, true, 0, commandType: CommandType.StoredProcedure).Single();
+                return con.Query<MemberRegistrationViewModel>("sprocMemberRegistrationSelectSingleItem",
+                                                              para, null, true, 0, commandType: CommandType.StoredProcedure).Single();
             }
         }
 
 
         public List<MemberRegistrationGridModel> GetMemberList()
         {
-            using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("DBConnGymDB_PRD")))
+            using (SqlConnection con = new SqlConnection(_configuration["SQLConnString_PRD:DBConnGymDB_PRD"]))
             {
-                return con.Query<MemberRegistrationGridModel>("sprocMemberRegistrationSelectList", null, null, true, 0, commandType: CommandType.StoredProcedure).ToList();
+                return con.Query<MemberRegistrationGridModel>("sprocMemberRegistrationSelectList",
+                                                              null, null, true, 0, commandType: CommandType.StoredProcedure).ToList();
             }
         }
 
         public int InsertMember(MemberRegistration memberRegistration)
         {
-            using (var con = new SqlConnection(_configuration.GetConnectionString("DBConnGymDB_PRD")))
+            using (var con = new SqlConnection(_configuration["SQLConnString_PRD:DBConnGymDB_PRD"]))
             {
                 con.Open();
                 var sqlTransaction = con.BeginTransaction();
@@ -124,7 +126,8 @@ namespace GymAPI.Concrete
                 para.Add("@JoiningDate", memberRegistration.JoiningDate);
                 para.Add("@ModifiedBy", 0);
                 para.Add("@MemIDOUT", dbType: DbType.Int32, direction: ParameterDirection.Output);
-                int resultMember = con.Execute("SprocMemberRegistrationInsertUpdateSingleItem", para, sqlTransaction, 0, CommandType.StoredProcedure);
+                int resultMember = con.Execute("SprocMemberRegistrationInsertUpdateSingleItem",
+                                               para, sqlTransaction, 0, CommandType.StoredProcedure);
                 int memberId = para.Get<int>("MemIDOUT");
 
                 var paramater = new DynamicParameters();
@@ -139,7 +142,8 @@ namespace GymAPI.Concrete
                 paramater.Add("@RecStatus", "A");
                 paramater.Add("@MemberID", memberId);
                 paramater.Add("@PaymentIDOUT", dbType: DbType.Int32, direction: ParameterDirection.Output);
-                int resultPayment = con.Execute("sprocPaymentDetailsInsertUpdateSingleItem", paramater, sqlTransaction, 0, CommandType.StoredProcedure);
+                int resultPayment = con.Execute("sprocPaymentDetailsInsertUpdateSingleItem",
+                                                paramater, sqlTransaction, 0, CommandType.StoredProcedure);
                 int paymentId = paramater.Get<int>("PaymentIDOUT");
 
                 if (resultMember > 0 && resultPayment > 0)
@@ -157,7 +161,7 @@ namespace GymAPI.Concrete
 
         public int UpdateMember(MemberRegistration memberRegistration)
         {
-            using (var con = new SqlConnection(_configuration.GetConnectionString("DBConnGymDB_PRD")))
+            using (var con = new SqlConnection(_configuration["SQLConnString_PRD:DBConnGymDB_PRD"]))
             {
                 con.Open();
                 var sqlTransaction = con.BeginTransaction();

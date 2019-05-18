@@ -91,10 +91,11 @@ namespace GymAPI.Common
                 // do nothing
                 return;
             }
+
             var result = new RedirectToRouteResult(
             new RouteValueDictionary
             {
-            {"controller", "Errorview"}, {"action", "Error"}
+                {"controller", "Errorview"}, {"action", "Error"}
             });
             // TODO: Pass additional detailed data via ViewData
             context.Result = result;

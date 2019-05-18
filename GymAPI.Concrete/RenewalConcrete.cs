@@ -44,7 +44,9 @@ namespace GymAPI.Concrete
         public bool CheckRenewalPaymentExists(DateTime newdate, long memberId)
         {
             var data = (from payment in _context.PaymentDetails
-                        where payment.MemberID == memberId && newdate.Date >= payment.PaymentFromdt.Date && newdate.Date <= payment.PaymentTodt.Date
+                        where payment.MemberID == memberId &&
+                        newdate.Date >= payment.PaymentFromdt.Date &&
+                        newdate.Date <= payment.PaymentTodt.Date
                         select payment).Any();
 
             return data;

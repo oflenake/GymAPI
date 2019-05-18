@@ -41,7 +41,8 @@ namespace GymAPI
             #region Database and Jwt
 
             // Configure Database operations
-            var connection = Configuration.GetConnectionString("DBConnGymDB_PRD");
+            //var connection = Configuration.GetConnectionString("DBConnGymDB_PRD");
+            var connection = Configuration["SQLConnString_PRD:DBConnGymDB_PRD"];
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection, b => b.UseRowNumberForPaging()));
 
             var appSettingsSection = Configuration.GetSection("AppSettings");

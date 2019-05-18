@@ -26,7 +26,7 @@ namespace GymAPI.Concrete
 
         public void InsertPlan(PlanMaster plan)
         {
-            using (SqlConnection con = new SqlConnection(_configuration.GetConnectionString("DBConnGymDB_PRD")))
+            using (SqlConnection con = new SqlConnection(_configuration["SQLConnString_PRD:DBConnGymDB_PRD"]))
             {
                 var paramater = new DynamicParameters();
                 paramater.Add("@PlanID", plan.PlanID);
@@ -38,7 +38,8 @@ namespace GymAPI.Concrete
                 paramater.Add("@CreateUserID", plan.CreateUserID);
                 paramater.Add("@ModifyUserID", plan.ModifyUserID);
                 paramater.Add("@RecStatus", plan.RecStatus);
-                var value = con.Query<int>("sprocPlanMasterInsertUpdateSingleItem", paramater, null, true, 0, commandType: CommandType.StoredProcedure);
+                var value = con.Query<int>("sprocPlanMasterInsertUpdateSingleItem",
+                                           paramater, null, true, 0, commandType: CommandType.StoredProcedure);
             }
         }
 
@@ -151,12 +152,13 @@ namespace GymAPI.Concrete
         }
         public string GetAmount(int planId, int schemeId)
         {
-            using (var con = new SqlConnection(_configuration.GetConnectionString("DBConnGymDB_PRD")))
+            using (var con = new SqlConnection(_configuration["SQLConnString_PRD:DBConnGymDB_PRD"]))
             {
                 var para = new DynamicParameters();
                 para.Add("@PlanID", planId);
                 para.Add("@SchemeID", schemeId);
-                return con.Query<string>("Usp_GetAmount_reg", para, null, true, 0, commandType: CommandType.StoredProcedure).SingleOrDefault();
+                return con.Query<string>("Usp_GetAmount_reg", para,
+                                         null, true, 0, commandType: CommandType.StoredProcedure).SingleOrDefault();
             }
         }
 

@@ -25,7 +25,7 @@ namespace GymAPI.Concrete
         }
         public GenerateRecepitViewModel Generate(int paymentId)
         {
-            using (var con = new SqlConnection(_configuration.GetConnectionString("DBConnGymDB_PRD")))
+            using (var con = new SqlConnection(_configuration["SQLConnString_PRD:DBConnGymDB_PRD"]))
             {
                 var para = new DynamicParameters();
                 para.Add("@PaymentID", paymentId);

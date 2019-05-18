@@ -68,7 +68,7 @@ namespace GymAPI.Concrete
 
         public bool RenewalPayment(RenewalViewModel renewalViewModel)
         {
-            using (var con = new SqlConnection(_configuration.GetConnectionString("DBConnGymDB_PRD")))
+            using (var con = new SqlConnection(_configuration["SQLConnString_PRD:DBConnGymDB_PRD"]))
             {
                 con.Open();
                 var sqlTransaction = con.BeginTransaction();
