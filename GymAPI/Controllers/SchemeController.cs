@@ -68,6 +68,7 @@ namespace GymAPI.Controllers
                 {
                     var userId = this.User.FindFirstValue(ClaimTypes.Name);
 
+                    //var tempSchemeMaster = AutoMapper.Mapper.Map<SchemeMaster>(schemeMaster);
                     var tempSchemeMaster = AutoMapper.Mapper.Map<SchemeMaster>(schemeMaster);
                     tempSchemeMaster.Createddate = DateTime.Now;
                     tempSchemeMaster.Createdby = Convert.ToInt32(userId);

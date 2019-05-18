@@ -1,13 +1,15 @@
-﻿using System.Text;
-using GymAPI.Common;
-using GymAPI.Concrete;
-using GymAPI.Interface;
-using GymAPI.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -16,6 +18,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using GymAPI.Common;
+using GymAPI.Concrete;
+using GymAPI.Interface;
+using GymAPI.Mappings;
+using GymAPI.Models;
 
 namespace GymAPI
 {
@@ -31,17 +40,16 @@ namespace GymAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.Configure<CookiePolicyOptions>(options =>
-            //{
-            //    // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-            //    options.CheckConsentNeeded = context => true;
-            //    options.MinimumSameSitePolicy = SameSiteMode.None;
-            //});
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
 
             #region Database and Jwt
 
             // Configure Database operations
-            //var connection = Configuration.GetConnectionString("DBConnGymDB_PRD");
             var connection = Configuration["SQLConnString_PRD:DBConnGymDB_PRD"];
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connection, b => b.UseRowNumberForPaging()));
 
@@ -89,6 +97,11 @@ namespace GymAPI
             });
             #endregion
 
+            // Register and Initialize AutoMapper
+            Mapper.Initialize(cfg => cfg.AddProfile<MappingProfile>());
+            services.AddAutoMapper();
+            // End Registering and Initializing AutoMapper
+
             services.AddMvc(options => { options.Filters.Add(typeof(CustomExceptionFilterAttribute)); })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(options =>
@@ -106,11 +119,14 @@ namespace GymAPI
                         .WithExposedHeaders("X-Pagination"));
             });
 
-            // In production, the Angular files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp";
-            });
+            // Swagger documentation
+            services.AddSwaggerDocumentation();
+
+            //// In production, the Angular files will be served from this directory
+            //services.AddSpaStaticFiles(configuration =>
+            //{
+            //    configuration.RootPath = "ClientApp";
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -119,22 +135,26 @@ namespace GymAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                //Configure Swagger only for development purose not for production app.
+                app.UseSwaggerDocumentation();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
+                //app.UseHsts();
             }
 
             app.UseStaticFiles();
-            app.UseSpaStaticFiles();
+            app.UseCookiePolicy();
             app.UseAuthentication();
+
             app.UseCors("CorsPolicy");
+            //app.UseSpaStaticFiles();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
 
             //app.UseSpa(spa =>
@@ -149,6 +169,65 @@ namespace GymAPI
             //        spa.UseAngularCliServer(npmScript: "start");
             //    }
             //});
+        }
+    }
+
+    /// <summary>
+    /// Extension <see cref="AddSwaggerDocumentation"/> method or middleware for <see cref="SwaggerServiceExtensions"/> 
+    /// Swagger configuration in asp.net core for swagger version > 2.0.
+    /// Reference From : https://ppolyzos.com/2017/10/30/add-jwt-bearer-authorization-to-swagger-and-asp-net-core/
+    /// </summary>
+    public static class SwaggerServiceExtensions
+    {
+        public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1.0", new Info { Title = "Main API v1.0", Version = "v1.0" });
+
+                //Locate the XML file being generated by ASP.NET...
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.XML";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                if (File.Exists(xmlPath))
+                {
+                    //... and tell Swagger to use those XML comments.
+                    c.IncludeXmlComments(xmlPath);
+                }
+
+                // Swagger 2.+ support
+                var security = new Dictionary<string, IEnumerable<string>>
+                {
+                    {"Bearer", new string[] { }},
+                };
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = "header",
+                    Type = "apiKey"
+                });
+                // Must require for swagger version > 2.0
+                c.AddSecurityRequirement(security);
+            });
+            return services;
+        }
+
+        public static IApplicationBuilder UseSwaggerDocumentation(this IApplicationBuilder app)
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Gym App - Web API v1.0");
+                c.DocumentTitle = "Title Documentation";
+                //Reference link : https://stackoverflow.com/questions/22008452/collapse-expand-swagger-response-model-class
+                //Reference link : https://swagger.io/docs/open-source-tools/swagger-ui/usage/deep-linking/
+                //  c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+                // c.DocExpansion(DocExpansion.Full);
+                //    //Reference document: https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-2.2&tabs=visual-studio
+                //    //To serve the Swagger UI at the app's root (http://localhost:<port>/), set the RoutePrefix property to an empty string:
+                c.RoutePrefix = string.Empty;
+            });
+            return app;
         }
     }
 }
