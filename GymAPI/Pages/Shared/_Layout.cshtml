@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]Vision-Dream &amp; Gym App</title>
+    <title>@ViewData["Title"]Gym App API</title>
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
@@ -25,7 +25,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Vision-Dream &amp; Gym App</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">@ViewData["Title"]</a>
             </div>
         </div>
     </nav>
@@ -34,7 +34,15 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2019 Vision-Dream, Inc. Product Development - Gym App</p>
+            <div class="container-fluid text-small">
+                <span class="text-muted" style="float:left;">
+                    App ver: 1.0.0 &middot; Powered by: 
+                    <a href="http://vision-dream.local" target="_blank">Vision-Dream ICT Solutions</a>
+                </span>
+                <span class="text-muted" style="float:right;">
+                    &copy; 2018-2019 Vision-Dream, Inc. All rights reserved.
+                </span>
+            </div>
         </footer>
     </div>
     <environment include="Development">

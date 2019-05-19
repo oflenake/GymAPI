@@ -11,6 +11,7 @@ namespace GymAPI.ViewModels
         public int UserId { get; set; }
         public string UserName { get; set; }
         public bool Status { get; set; }
+        public bool RememberMe { get; set; }
         public int RoleId { get; set; }
     }
 }

@@ -21,5 +21,6 @@ namespace GymAPI.Models
         public int? Createdby { get; set; }
         public DateTime? CreatedDate { get; set; }
         public bool Status { get; set; }
+        public bool RememberMe { get; set; }
     }
 }

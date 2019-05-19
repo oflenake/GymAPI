@@ -23,5 +23,6 @@ namespace GymAPI.ViewModels
         public string Password { get; set; }
 
         public bool Status { get; set; }
+        public bool RememberMe { get; set; }        
     }
 }

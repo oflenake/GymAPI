@@ -73,7 +73,7 @@ namespace GymAPI.Controllers
                             var token = tokenHandler.CreateToken(tokenDescriptor);
                             value.Token = tokenHandler.WriteToken(token);
 
-                            // remove password before returning
+                            // Remove password before returning
                             value.Password = null;
                             value.Usertype = userdetails.RoleId;
 

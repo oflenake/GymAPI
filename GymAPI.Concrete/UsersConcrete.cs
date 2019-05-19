@@ -49,6 +49,7 @@ namespace GymAPI.Concrete
                                   UserId = user.UserId,
                                   RoleId = userinrole.RoleId,
                                   Status = user.Status,
+                                  RememberMe = user.RememberMe,
                                   UserName = user.UserName
 
                               }).SingleOrDefault();
@@ -125,6 +126,7 @@ namespace GymAPI.Concrete
             _context.Entry(user).Property(x => x.EmailId).IsModified = true;
             _context.Entry(user).Property(x => x.Contactno).IsModified = true;
             _context.Entry(user).Property(x => x.Status).IsModified = true;
+            _context.Entry(user).Property(x => x.RememberMe).IsModified = true;
             _context.Entry(user).Property(x => x.FullName).IsModified = true;
             _context.Entry(user).Property(x => x.Password).IsModified = true;
 
