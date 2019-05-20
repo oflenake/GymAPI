@@ -214,8 +214,8 @@ namespace GymAPI
 
         public static IApplicationBuilder UseSwaggerDocumentation(this IApplicationBuilder app, IConfiguration config)
         {
-            var appEndpoint = config["AppBaseApiUrl:AppBaseEndpoint"];
-            var swaggerEndpoint = appEndpoint + "/swagger-ui";
+            //var appEndpoint = config["AppBaseApiUrl:AppBaseEndpoint"];
+            //var swaggerEndpoint = appEndpoint + "/swagger-ui";
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -228,8 +228,8 @@ namespace GymAPI
                 // c.DocExpansion(DocExpansion.Full);
                 //    //Reference document: https://docs.microsoft.com/en-us/aspnet/core/tutorials/getting-started-with-swashbuckle?view=aspnetcore-2.2&tabs=visual-studio
                 //    //To serve the Swagger UI at the app's root (http://localhost:<port>/), set the RoutePrefix property to an empty string:
-                //c.RoutePrefix = string.Empty;
-                c.RoutePrefix = swaggerEndpoint;
+                c.RoutePrefix = string.Empty;
+                //c.RoutePrefix = swaggerEndpoint;
             });
             return app;
         }
