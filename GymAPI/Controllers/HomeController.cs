@@ -29,7 +29,7 @@ namespace GymAPI.Controllers
         public IActionResult About()
         {
             //ViewData["Message"] = "Your application description page.";
-            ViewData["Message"] = "Gym Application system is used to manage Vision-Dream App processes.";
+            ViewData["Message"] = "Gym Application system is used to manage Gym processes.";
             return View();
         }
 
